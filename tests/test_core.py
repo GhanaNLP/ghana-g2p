@@ -123,13 +123,13 @@ def test_ninkare_real_length_preserved():
     assert GhanaG2P("Ninkare").convert("baa").units == ["b", "aː"]
 
 
-def test_nasal_vowel_keeps_correction():
-    """africa-g2p re-attaches combining marks, so fixes must match the unit's base.
+def test_nasal_vowel_uses_declared_value():
+    """Ninkare's rules declare ẽ -> ɛ̃: nasalization lowers the vowel, it is not a suffix.
 
     Units carry combining marks rather than precomposed characters — many IPA
     combinations have no precomposed form, so the decomposed shape is the consistent one.
     """
-    assert GhanaG2P("Ninkare").convert("wẽ").units == ["w", "ẽ"]
+    assert GhanaG2P("Ninkare").convert("wẽ").units == ["w", "ɛ̃"]
     assert "ː" not in GhanaG2P("Ninkare").ipa("wẽ")  # no spurious length
 
 

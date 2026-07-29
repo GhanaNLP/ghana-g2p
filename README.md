@@ -151,10 +151,19 @@ layers, and the provenance reporting. Fixes that belong upstream are reported th
 
 Apache-2.0. Underlying rule data is subject to africa-g2p's own licence.
 
-## Upstream issues
+## Upstream status
 
-Defects found in the africa-g2p rule data while building this are reported at
-[AfriSpeech/africa-g2p#2](https://github.com/AfriSpeech/africa-g2p/issues/2). As they are
-fixed upstream the corresponding entries in `patches.json` become no-ops and can be removed —
-the tests assert correct output rather than the presence of a workaround, so they keep passing
-either way.
+The defects found while building this were reported as
+[AfriSpeech/africa-g2p#2](https://github.com/AfriSpeech/africa-g2p/issues/2) and fixed
+upstream in [#3](https://github.com/AfriSpeech/africa-g2p/pull/3). Because the tests assert
+correct output rather than the presence of a workaround, they kept passing across the change.
+
+Now redundant (fixed upstream, kept only so older africa-g2p checkouts still work):
+phonetic brackets, the Ga Greek epsilon, and the Ewe `<y>` mapping.
+
+Still needed here: the Ninkare vowel-length correction, which is a per-language linguistic
+judgement rather than a data defect, and the missing-letter patch table.
+
+One upstream fix improved output beyond what this wrapper could do on its own — rule keys
+containing combining marks are now reachable, so Ninkare `ẽ` yields `ɛ̃` (nasalization lowers
+the vowel) instead of `e` plus a tilde.
