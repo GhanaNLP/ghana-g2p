@@ -1,0 +1,522 @@
+{
+  "_comment": "Ghanaian language registry. `rules` is the africa-g2p code actually used. `tier` records how it was obtained: native (the language's own rules), equivalent (same language, different code), donor (a related language's rules). `normalise` fixes Unicode codepoint variants before segmentation. Coverage figures are measured against real ghana-speech transcriptions.",
+  "twi": {
+    "name": "Twi",
+    "aliases": [
+      "Akan",
+      "Akuapem Twi",
+      "Asante Twi",
+      "Twi_twi",
+      "Akuapem_Twi_twi",
+      "Asante_Twi_twi"
+    ],
+    "rules": "twi",
+    "tier": "native",
+    "family": "Kwa / Central Tano",
+    "coverage": 1.0,
+    "note": "Akuapem and Asante share the Twi rule set"
+  },
+  "fat": {
+    "name": "Fante",
+    "aliases": [
+      "Fanti",
+      "Mfantse",
+      "Fante_fat"
+    ],
+    "rules": "fat",
+    "tier": "native",
+    "family": "Kwa / Central Tano",
+    "coverage": 1.0
+  },
+  "any": {
+    "name": "Anyin",
+    "aliases": [
+      "Anyi",
+      "Agni",
+      "Anyin_any"
+    ],
+    "rules": "any",
+    "tier": "native",
+    "family": "Kwa / Central Tano (Bia)",
+    "coverage": 1.0
+  },
+  "nzi": {
+    "name": "Nzema",
+    "aliases": [
+      "Nzima",
+      "Nzema_nzi"
+    ],
+    "rules": "nzi",
+    "tier": "native",
+    "family": "Kwa / Central Tano (Bia)",
+    "coverage": 1.0
+  },
+  "sfw": {
+    "name": "Sehwi",
+    "aliases": [
+      "Sefwi",
+      "Asahyue",
+      "Sehwi_sfw"
+    ],
+    "rules": "any",
+    "tier": "donor",
+    "family": "Kwa / Central Tano (Bia)",
+    "coverage": 1.0,
+    "note": "africa-g2p has no sfw rules; Sehwi is closely related to Anyin"
+  },
+  "ewe": {
+    "name": "Ewe",
+    "aliases": [
+      "Eʋe",
+      "Ewe_ewe"
+    ],
+    "rules": "ewe",
+    "tier": "native",
+    "family": "Kwa / Gbe",
+    "coverage": 1.0,
+    "note": "africa-g2p maps orthographic <y> to IPA y; corrected to j here"
+  },
+  "gaa": {
+    "name": "Ga",
+    "aliases": [
+      "Gã"
+    ],
+    "rules": "gaa",
+    "tier": "native",
+    "family": "Kwa / Ga-Dangme"
+  },
+  "ada": {
+    "name": "Dangme",
+    "aliases": [
+      "Adangme",
+      "Dangbe",
+      "Dangme_ada"
+    ],
+    "rules": "gaa",
+    "tier": "donor",
+    "family": "Kwa / Ga-Dangme",
+    "coverage": 1.0,
+    "note": "the ada rule set lacks h and r; Ga is the sister language"
+  },
+  "avn": {
+    "name": "Avatime",
+    "aliases": [
+      "Siya",
+      "Avatime_avn"
+    ],
+    "rules": "avn",
+    "tier": "native",
+    "family": "Kwa / GTM Ka-Togo",
+    "coverage": 1.0
+  },
+  "akp": {
+    "name": "Siwu",
+    "aliases": [
+      "Lolobi",
+      "Akpafu",
+      "Siwu_akp"
+    ],
+    "rules": "akp",
+    "tier": "native",
+    "family": "Kwa / GTM Na-Togo",
+    "coverage": 1.0
+  },
+  "lef": {
+    "name": "Lelemi",
+    "aliases": [
+      "Buem",
+      "Lefana",
+      "Lelemi_lef"
+    ],
+    "rules": "avn",
+    "tier": "donor",
+    "family": "Kwa / GTM Na-Togo",
+    "coverage": 1.0,
+    "note": "Siwu is genetically closer but drops ƒ; Avatime preserves it"
+  },
+  "lip": {
+    "name": "Sekpele",
+    "aliases": [
+      "Likpe",
+      "Sekpele_lip"
+    ],
+    "rules": "ewe",
+    "tier": "donor",
+    "family": "Kwa / GTM Na-Togo",
+    "coverage": 1.0,
+    "normalise": {
+      "ǝ": "ə",
+      "Ǝ": "Ə"
+    },
+    "note": "only donor covering ǝ; Volta-region orthography follows Ewe conventions"
+  },
+  "snw": {
+    "name": "Selee",
+    "aliases": [
+      "Santrokofi",
+      "Sele",
+      "Selee_snw"
+    ],
+    "rules": "akp",
+    "tier": "donor",
+    "family": "Kwa / GTM Na-Togo",
+    "coverage": 1.0
+  },
+  "bov": {
+    "name": "Tuwuli",
+    "aliases": [
+      "Bowiri",
+      "Bowli",
+      "Tuwuli_bov"
+    ],
+    "rules": "avn",
+    "tier": "donor",
+    "family": "Kwa / GTM Ka-Togo",
+    "coverage": 1.0
+  },
+  "gjn": {
+    "name": "Gonja",
+    "aliases": [
+      "Ngbanya",
+      "Gonja_gjn"
+    ],
+    "rules": "gjn",
+    "tier": "native",
+    "family": "Kwa / North Guang",
+    "coverage": 1.0
+  },
+  "ncu": {
+    "name": "Chumburung",
+    "aliases": [
+      "Kyongborong",
+      "Chumburung_ncu"
+    ],
+    "rules": "ncu",
+    "tier": "native",
+    "family": "Kwa / North Guang",
+    "coverage": 0.9988,
+    "normalise": {
+      "ꞌ": "ʼ",
+      "Ꞌ": "ʼ"
+    }
+  },
+  "acd": {
+    "name": "Gikyode",
+    "aliases": [
+      "Kyode",
+      "Achode",
+      "Gikyode_acd"
+    ],
+    "rules": "acd",
+    "tier": "native",
+    "family": "Kwa / North Guang",
+    "coverage": 1.0,
+    "normalise": {
+      "ꞌ": "ʼ",
+      "Ꞌ": "ʼ"
+    }
+  },
+  "nko": {
+    "name": "Nkonya",
+    "aliases": [
+      "Nkonya_nko"
+    ],
+    "rules": "nko",
+    "tier": "native",
+    "family": "Kwa / North Guang",
+    "coverage": 0.9998
+  },
+  "naw": {
+    "name": "Nawuri",
+    "aliases": [
+      "Nawuri_naw"
+    ],
+    "rules": "nko",
+    "tier": "donor",
+    "family": "Kwa / North Guang",
+    "coverage": 1.0,
+    "note": "the naw rule set has no p; Nkonya is the same branch"
+  },
+  "dag": {
+    "name": "Dagbani",
+    "aliases": [
+      "Dagbanli",
+      "Dagbani_dag"
+    ],
+    "rules": "dag",
+    "tier": "native",
+    "family": "Gur / Western Oti-Volta",
+    "coverage": 1.0
+  },
+  "maw": {
+    "name": "Mampruli",
+    "aliases": [
+      "Mamprusi",
+      "Mampruli_maw"
+    ],
+    "rules": "maw",
+    "tier": "native",
+    "family": "Gur / Western Oti-Volta",
+    "coverage": 1.0
+  },
+  "kus": {
+    "name": "Kusaal",
+    "aliases": [
+      "Kusasi",
+      "Kusaal_kus"
+    ],
+    "rules": "kus",
+    "tier": "native",
+    "family": "Gur / Western Oti-Volta",
+    "coverage": 1.0
+  },
+  "gur": {
+    "name": "Ninkare",
+    "aliases": [
+      "Frafra",
+      "Gurene",
+      "Farefare",
+      "Ninkare_gur"
+    ],
+    "rules": "gur",
+    "tier": "native",
+    "family": "Gur / Western Oti-Volta",
+    "coverage": 1.0
+  },
+  "dga": {
+    "name": "Dagaare",
+    "aliases": [
+      "Dagaari",
+      "Dagara",
+      "Dagaare_dga"
+    ],
+    "rules": "dgd",
+    "tier": "equivalent",
+    "family": "Gur / Southwestern Oti-Volta",
+    "coverage": 1.0,
+    "note": "africa-g2p codes Dagaare as dgd"
+  },
+  "biv": {
+    "name": "Southern Birifor",
+    "aliases": [
+      "Birifor",
+      "Birifor_Southern_biv"
+    ],
+    "rules": "dgd",
+    "tier": "donor",
+    "family": "Gur / Southwestern Oti-Volta",
+    "coverage": 1.0,
+    "normalise": {
+      "ʊ": "ʋ",
+      "Ʊ": "Ʋ"
+    },
+    "note": "dialect continuum with Dagaare; Birifor spells /ʊ/ with U+028A, Dagaare with U+028B"
+  },
+  "bwu": {
+    "name": "Buli",
+    "aliases": [
+      "Builsa",
+      "Kanjaga",
+      "Buli_bwu"
+    ],
+    "rules": "dgd",
+    "tier": "donor",
+    "family": "Gur / Buli-Konni",
+    "coverage": 1.0
+  },
+  "kma": {
+    "name": "Konni",
+    "aliases": [
+      "Koma",
+      "Komung",
+      "Konni_kma"
+    ],
+    "rules": "dgd",
+    "tier": "donor",
+    "family": "Gur / Buli-Konni",
+    "coverage": 1.0,
+    "note": "same branch as Buli; Dagbani/Mampruli lack ɩ and ʋ"
+  },
+  "bim": {
+    "name": "Bimoba",
+    "aliases": [
+      "Moar",
+      "Bimoba_bim"
+    ],
+    "rules": "bim",
+    "tier": "native",
+    "family": "Gur / Eastern Oti-Volta",
+    "coverage": 1.0
+  },
+  "xon": {
+    "name": "Konkomba",
+    "aliases": [
+      "Likpakpaanl",
+      "Konkomba_xon"
+    ],
+    "rules": "xon",
+    "tier": "native",
+    "family": "Gur / Eastern Oti-Volta",
+    "coverage": 1.0
+  },
+  "bud": {
+    "name": "Bassar",
+    "aliases": [
+      "Ntcham",
+      "Basari",
+      "Bassar_Ntcham_bud"
+    ],
+    "rules": "kdh",
+    "tier": "donor",
+    "family": "Gur / Eastern Oti-Volta",
+    "coverage": 1.0,
+    "note": "the bud rule set has no e or o; Tem is the neighbouring Gur language"
+  },
+  "kdh": {
+    "name": "Tem",
+    "aliases": [
+      "Kotokoli",
+      "Temba",
+      "Tem_kdh"
+    ],
+    "rules": "kdh",
+    "tier": "native",
+    "family": "Gur / Gurma",
+    "coverage": 1.0,
+    "normalise": {
+      "ʊ": "ʋ",
+      "Ʊ": "Ʋ"
+    },
+    "note": "Tem texts spell /ʊ/ with U+028A; the rule set uses U+028B"
+  },
+  "kbp": {
+    "name": "Kabiye",
+    "aliases": [
+      "Kabiyè",
+      "Kabre",
+      "Kabiye_kbp"
+    ],
+    "rules": "kbp",
+    "tier": "native",
+    "family": "Gur / Gurma",
+    "coverage": 0.9999
+  },
+  "ntr": {
+    "name": "Ntrubo",
+    "aliases": [
+      "Delo",
+      "Chala",
+      "Ntrubo_ntr"
+    ],
+    "rules": "kbp",
+    "tier": "donor",
+    "family": "Gur",
+    "coverage": 1.0
+  },
+  "xsm": {
+    "name": "Kasem",
+    "aliases": [
+      "Kassena",
+      "Kasem_xsm"
+    ],
+    "rules": "xsm",
+    "tier": "native",
+    "family": "Gur / Grusi",
+    "coverage": 1.0
+  },
+  "vag": {
+    "name": "Vagla",
+    "aliases": [
+      "Vagala",
+      "Vagla_vag"
+    ],
+    "rules": "vag",
+    "tier": "native",
+    "family": "Gur / Grusi",
+    "coverage": 1.0
+  },
+  "sig": {
+    "name": "Paasaal",
+    "aliases": [
+      "Pasaale",
+      "Sisaala Pasaale",
+      "Paasaal_sig"
+    ],
+    "rules": "sig",
+    "tier": "native",
+    "family": "Gur / Grusi",
+    "coverage": 1.0
+  },
+  "sil": {
+    "name": "Tumulung Sisaala",
+    "aliases": [
+      "Sisaala",
+      "Sisaala_Tumulung_sil"
+    ],
+    "rules": "sld",
+    "tier": "equivalent",
+    "family": "Gur / Grusi",
+    "coverage": 1.0,
+    "note": "the ssl rule set spells the vowels ɪ ʊ; Tumulung texts use ɩ ʋ, which sld covers"
+  },
+  "tpm": {
+    "name": "Tampulma",
+    "aliases": [
+      "Tamprusi",
+      "Tampolem",
+      "Tampulma_tpm"
+    ],
+    "rules": "xsm",
+    "tier": "donor",
+    "family": "Gur / Grusi",
+    "coverage": 1.0
+  },
+  "mzw": {
+    "name": "Deg",
+    "aliases": [
+      "Mo",
+      "Buru",
+      "Deg_mzw"
+    ],
+    "rules": "mfi",
+    "tier": "equivalent",
+    "family": "Gur / Grusi",
+    "coverage": 0.9999,
+    "note": "africa-g2p codes Deg as mfi (Mo)"
+  },
+  "hau": {
+    "name": "Hausa",
+    "aliases": [
+      "Hausa_hau"
+    ],
+    "rules": "hau-nigeria",
+    "tier": "equivalent",
+    "family": "Afro-Asiatic / Chadic",
+    "coverage": 1.0,
+    "note": "Ghanaian Hausa follows the Nigerian Boko orthography"
+  },
+  "ffm": {
+    "name": "Maasina Fulfulde",
+    "aliases": [
+      "Fulfulde",
+      "Fulani",
+      "Fulfulde_Maasina_ffm"
+    ],
+    "rules": "ffm",
+    "tier": "native",
+    "family": "Atlantic / Fula",
+    "coverage": 1.0
+  },
+  "bib": {
+    "name": "Bissa",
+    "aliases": [
+      "Bisa",
+      "Barka",
+      "Bissa_bib"
+    ],
+    "rules": "bib",
+    "tier": "native",
+    "family": "Mande",
+    "coverage": 1.0
+  }
+}

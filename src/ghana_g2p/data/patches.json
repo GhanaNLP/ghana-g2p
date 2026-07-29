@@ -1,0 +1,30 @@
+{
+  "_comment": "Corrections applied on top of africa-g2p. `universal` fills in letters that individual rule sets omit even though the orthography uses them - the values are the conventional readings of these letters across Ghanaian Latin orthographies. `per_rules` fixes mappings that are wrong rather than missing, keyed by africa-g2p rule code. Every entry is applied only when the rule set does not already handle the character, so a language's own rules always win.",
+
+  "universal": {
+    "c": {"ipa": "t͡ʃ", "grapheme": "c", "note": "c is /t͡ʃ/ in most Ghanaian orthographies"},
+    "j": {"ipa": "d͡ʒ", "grapheme": "j"},
+    "r": {"ipa": "ɾ", "grapheme": "r"},
+    "v": {"ipa": "v", "grapheme": "v"},
+    "z": {"ipa": "z", "grapheme": "z"},
+    "p": {"ipa": "p", "grapheme": "p"},
+    "h": {"ipa": "h", "grapheme": "h"},
+    "x": {"ipa": "x", "grapheme": "x"},
+    "ɣ": {"ipa": "ɣ", "grapheme": "ɣ", "note": "gamma, used in Kabiye"},
+    "ɲ": {"ipa": "ɲ", "grapheme": "ny"},
+    "ǝ": {"ipa": "ə", "grapheme": "ə"},
+    "ə": {"ipa": "ə", "grapheme": "ə"},
+    "ʼ": {"ipa": "ʔ", "grapheme": "ʼ", "note": "saltillo / apostrophe marks glottal stop"},
+    "ꞌ": {"ipa": "ʔ", "grapheme": "ʼ"},
+    "đ": {"ipa": "d", "grapheme": "d"},
+    "ð": {"ipa": "ð", "grapheme": "ð"},
+    "ƒ": {"ipa": "ɸ", "grapheme": "ƒ", "note": "f-hook, voiceless bilabial fricative"}
+  },
+
+  "per_rules": {
+    "ewe": {
+      "y": {"ipa": "j", "grapheme": "y", "force": true,
+            "note": "africa-g2p maps Ewe orthographic <y> to IPA y (a front rounded vowel). In Ewe <y> is the palatal glide /j/, as it is in every other language in this set."}
+    }
+  }
+}

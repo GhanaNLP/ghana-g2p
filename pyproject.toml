@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ghana-g2p"
+version = "0.1.0"
+description = "Grapheme-to-phoneme conversion for Ghanaian languages"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Ghana NLP" }]
+keywords = ["g2p", "phonemes", "ipa", "ghana", "twi", "ewe", "dagbani", "tts", "asr"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Text Processing :: Linguistic",
+]
+dependencies = ["africa-g2p"]
+
+[project.urls]
+Homepage = "https://github.com/GhanaNLP/ghana-g2p"
+Issues = "https://github.com/GhanaNLP/ghana-g2p/issues"
+
+[project.scripts]
+ghana-g2p = "ghana_g2p.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ghana_g2p"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
