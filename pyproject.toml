@@ -17,7 +17,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Topic :: Text Processing :: Linguistic",
 ]
-dependencies = ["africa-g2p"]
+dependencies = ["africa-g2p @ git+https://github.com/AfriSpeech/africa-g2p"]
 
 [project.urls]
 Homepage = "https://github.com/GhanaNLP/ghana-g2p"
