@@ -142,3 +142,11 @@ layers, and the provenance reporting. Fixes that belong upstream are reported th
 ## Licence
 
 Apache-2.0. Underlying rule data is subject to africa-g2p's own licence.
+
+## Upstream issues
+
+Defects found in the africa-g2p rule data while building this are reported at
+[AfriSpeech/africa-g2p#2](https://github.com/AfriSpeech/africa-g2p/issues/2). As they are
+fixed upstream the corresponding entries in `patches.json` become no-ops and can be removed —
+the tests assert correct output rather than the presence of a workaround, so they keep passing
+either way.
