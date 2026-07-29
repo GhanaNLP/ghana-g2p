@@ -125,13 +125,35 @@ Nkonya, Ga and Tem, each within the correct family.
 
 ## Output format
 
-`ipa()` and `grapheme()` default to the run-together form speech pipelines want: no
-punctuation, no spaces, phoneme units directly adjacent. Pass `sep=" "` for separated units.
+`ipa()` and `grapheme()` strip punctuation and whitespace. By default units run together;
+pass `sep=" "` to keep the boundaries.
 
-Note that apostrophes are **not** punctuation in several of these orthographies — in Anyin
-and the Guang languages they mark glottal stop, and are phonemised as `ʔ`. Digits are
-dropped rather than verbalised; normalise numbers to words before phonemising if you need
-them spoken.
+**Use `sep=" "` unless you have a reason not to.** Many units are more than one character —
+`ny` `kp` `gb` `nw` `kʰ` `k͡p` — so the run-together form is ambiguous about where one
+phoneme ends and the next begins. Twi `nw` is a single labialised nasal; a consumer that
+splits on characters reads it as `n` + `w`.
+
+This matters most for **forced alignment**. With
+[ctc-forced-aligner](https://github.com/michsethowusu/ctc-forced-aligner), feed
+space-separated units and align with `--split_size word`, so each phoneme unit gets one
+timestamped span:
+
+```python
+from ghana_g2p import GhanaG2P
+GhanaG2P("Asante Twi").ipa("Onyankopɔn nwoma", sep=" ")
+# 'o ɲ a n kʰ o pʰ ɔ n nʷ o m a'   -> 13 units, 13 alignment spans
+```
+
+Run-together text would force `--split_size char`, which splits every multi-character unit.
+(The aligner's normaliser folds modifier letters — `kʰ`→`kh`, `nʷ`→`nw` — but unit
+boundaries survive because they are space-separated.)
+
+Two more notes:
+
+- Apostrophes are **not** punctuation in several of these orthographies — in Anyin and the
+  Guang languages they mark glottal stop, and are phonemised as `ʔ`.
+- Digits are dropped rather than verbalised; normalise numbers to words before phonemising
+  if you need them spoken.
 
 ## Batch use
 

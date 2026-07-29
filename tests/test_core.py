@@ -210,3 +210,24 @@ def test_non_native_entries_explain_themselves():
 
 def test_oneshot_helper():
     assert g2p("Akwaaba", "twi") == GhanaG2P("twi").ipa("Akwaaba")
+
+
+def test_multichar_units_need_separator_to_stay_unambiguous():
+    """The reason sep=" " matters for forced alignment.
+
+    Twi <nw> is one labialised nasal. Run together, nothing marks its boundary, so a
+    character-level consumer reads it as two sounds; space-separated, it stays one unit.
+    """
+    g = GhanaG2P("Asante Twi")
+    units = g.convert("nwoma").units
+    assert "nʷ" in units
+    assert g.ipa("nwoma", sep=" ").split() == units
+    assert len(list(g.ipa("nwoma"))) != len(units)  # collapsed form loses the boundary
+
+
+def test_spaced_output_unit_count_matches_units_list():
+    for lang, text in [("Asante Twi", "Onyankopɔn nwoma"), ("Ewe", "nyui yayra"),
+                       ("Dagbani", "Naawuni yɛlimaŋli")]:
+        g = GhanaG2P(lang)
+        assert g.ipa(text, sep=" ").split() == g.convert(text).units
+        assert g.grapheme(text, sep=" ").split() == g.convert(text, "grapheme").units

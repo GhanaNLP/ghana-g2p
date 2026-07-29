@@ -17,7 +17,11 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Topic :: Text Processing :: Linguistic",
 ]
-dependencies = ["africa-g2p @ git+https://github.com/AfriSpeech/africa-g2p"]
+dependencies = [
+  # pinned: needs africa-g2p#3 (composed rule keys reachable) and #4 (non-IPA
+  # symbols removed from values). ghana-g2p no longer patches around either.
+  "africa-g2p @ git+https://github.com/AfriSpeech/africa-g2p@0094a341463087bd6f780043223deac2efba9d65",
+]
 
 [project.urls]
 Homepage = "https://github.com/GhanaNLP/ghana-g2p"

@@ -14,16 +14,6 @@ Output = Literal["ipa", "grapheme"]
 MARK = "�"  # africa-g2p's unknown='mark' sentinel
 
 
-# Some africa-g2p rule sets carry phonetic brackets in their values (every gur and kbp
-# value is written "[a]", "[k͡p]" …) and a few use U+0241 for the glottal stop instead of
-# the IPA U+0294. Neither is detectable as an "unknown" character, so we clean the units.
-_SANITISE = str.maketrans({"[": None, "]": None, "Ɂ": "ʔ"})
-
-
-def _sanitise(unit: str) -> str:
-    return unit.translate(_SANITISE)
-
-
 class UnknownLanguage(KeyError):
     """Raised for a language code/name that isn't in the Ghanaian registry."""
 
@@ -96,11 +86,18 @@ class GhanaG2P:
     Wraps africa-g2p with a Ghana-specific registry, Unicode normalisation for
     orthographic variants, and a patch layer for letters the upstream rule sets omit.
 
-    Output defaults to the run-together form (no spaces, no punctuation) that speech
-    pipelines want; pass sep=" " for space-separated units.
+    Output is punctuation-free and space-free by default. Note that many units are more
+    than one character (``ny`` ``kp`` ``gb`` ``kʰ`` ``k͡p``), so the run-together form is
+    ambiguous: nothing marks where one phoneme ends and the next begins. Pass ``sep=" "``
+    whenever a consumer needs to know the unit boundaries — forced alignment especially,
+    where a character-level split would map ``nw`` to two sounds instead of one.
 
         >>> GhanaG2P("Asante Twi").ipa("Mfiase no Onyankopɔn bɔɔ ɔsoro.")
         'mfiasenooɲankʰopʰɔnbɔɔɔsoɾo'
+        >>> GhanaG2P("Asante Twi").ipa("Onyankopɔn", sep=" ")
+        'o ɲ a n kʰ o pʰ ɔ n'
+
+    ``convert(...).units`` gives the same segmentation as a list.
     """
 
     def __init__(self, lang: str) -> None:
@@ -125,7 +122,7 @@ class GhanaG2P:
             if not spec.get("force"):
                 continue
             for mode in ("ipa", "grapheme"):
-                cur = [_sanitise(u) for u in self._g[mode].phonemes(ch)]
+                cur = self._g[mode].phonemes(ch)
                 if len(cur) == 1 and cur[0] != spec[mode]:
                     self._wrong.setdefault(mode, {})[cur[0]] = spec[mode]
 
@@ -138,14 +135,14 @@ class GhanaG2P:
         return text
 
     def _units(self, text: str, output: Output) -> list[str]:
-        return [s for s in (_sanitise(u) for u in self._g[output].phonemes(text)) if s]
+        return [u for u in self._g[output].phonemes(text) if u]
 
     def _known(self, ch: str, output: Output) -> bool:
         got = self._g[output].phonemes(ch)
         return bool(got) and not any(MARK in u for u in got)
 
     def _fix_forced(self, units: list[str], output: Output) -> list[str]:
-        """Replace units the rule set maps wrongly (e.g. Ewe <y> -> IPA y, not j).
+        """Replace units the rule set maps wrongly (e.g. gur marking e/i/o long).
 
         africa-g2p strips diacritics before matching and re-attaches them, so a
         precomposed vowel like ẽ arrives as the base vowel's value plus a combining
