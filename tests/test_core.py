@@ -88,26 +88,26 @@ def test_multigraphs_stay_single_units():
 
 
 def test_multigraph_survives_patch_path():
-    # 'ny' must stay /ɲ/ even though the Ewe <y> correction is active for this rule set
+    # 'ny' must stay /ɲ/ — segmentation must not fall back to character-by-character
     assert GhanaG2P("ewe").convert("nyui").units == ["ɲ", "u", "i"]
 
 
 # -- upstream defects -----------------------------------------------------
 
 def test_ewe_y_is_palatal_glide():
-    """africa-g2p maps Ewe <y> to IPA y (front rounded vowel); it is /j/."""
+    """Ewe <y> is the palatal glide /j/, not IPA y the front rounded vowel (africa-g2p#3)."""
     assert GhanaG2P("ewe").ipa("yayra") == "jajra"
 
 
 @pytest.mark.parametrize("lang", ["gur", "kbp", "ntr"])
 def test_no_phonetic_brackets_in_output(lang):
-    """gur and kbp rule values are written "[a]", "[k͡p]" — brackets must not leak."""
+    """Phonetic brackets must never appear in output (fixed upstream in africa-g2p#3)."""
     out = GhanaG2P(lang).ipa("abadeŋ")
     assert "[" not in out and "]" not in out
 
 
 def test_ga_epsilon_is_ipa_not_greek():
-    """The gaa rules emit GREEK SMALL LETTER EPSILON U+03B5; IPA open-e is U+025B."""
+    """IPA open-e is U+025B, not GREEK SMALL LETTER EPSILON U+03B5 (africa-g2p#3)."""
     out = GhanaG2P("Dangme").ipa("nyɛmimɛ")
     assert "ε" not in out
     assert "ɛ" in out
@@ -139,7 +139,7 @@ def test_ewe_voiced_bilabial_fricative_is_beta():
 
 
 def test_glottal_stop_is_ipa_codepoint():
-    """gur uses U+0241; IPA glottal stop is U+0294."""
+    """IPA glottal stop is U+0294, not U+0241 capital glottal stop (africa-g2p#4)."""
     out = GhanaG2P("Anyin").ipa("m'ɔ")
     assert "Ɂ" not in out
     assert "ʔ" in out
