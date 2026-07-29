@@ -106,6 +106,38 @@ def test_no_phonetic_brackets_in_output(lang):
     assert "[" not in out and "]" not in out
 
 
+def test_ga_epsilon_is_ipa_not_greek():
+    """The gaa rules emit GREEK SMALL LETTER EPSILON U+03B5; IPA open-e is U+025B."""
+    out = GhanaG2P("Dangme").ipa("nyɛmimɛ")
+    assert "ε" not in out
+    assert "ɛ" in out
+
+
+def test_ninkare_vowels_not_spuriously_long():
+    """gur marks e/i/o long while a/u/ɛ/ɔ stay short - an ATR contrast, not length."""
+    assert GhanaG2P("Ninkare").ipa("botɩ") == "botɪ"
+
+
+def test_ninkare_real_length_preserved():
+    """The fix must not strip length from genuinely doubled vowels."""
+    assert GhanaG2P("Ninkare").convert("baa").units == ["b", "aː"]
+
+
+def test_nasal_vowel_keeps_correction():
+    """africa-g2p re-attaches combining marks, so fixes must match the unit's base.
+
+    Units carry combining marks rather than precomposed characters — many IPA
+    combinations have no precomposed form, so the decomposed shape is the consistent one.
+    """
+    assert GhanaG2P("Ninkare").convert("wẽ").units == ["w", "ẽ"]
+    assert "ː" not in GhanaG2P("Ninkare").ipa("wẽ")  # no spurious length
+
+
+def test_ewe_voiced_bilabial_fricative_is_beta():
+    """Ewe <ʋ> is /β/ - U+03B2 is the correct IPA codepoint here, not a defect."""
+    assert GhanaG2P("ewe").ipa("aʋa") == "aβa"
+
+
 def test_glottal_stop_is_ipa_codepoint():
     """gur uses U+0241; IPA glottal stop is U+0294."""
     out = GhanaG2P("Anyin").ipa("m'ɔ")

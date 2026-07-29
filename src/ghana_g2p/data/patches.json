@@ -25,6 +25,16 @@
     "ewe": {
       "y": {"ipa": "j", "grapheme": "y", "force": true,
             "note": "africa-g2p maps Ewe orthographic <y> to IPA y (a front rounded vowel). In Ewe <y> is the palatal glide /j/, as it is in every other language in this set."}
+    },
+    "gaa": {
+      "ɛ": {"ipa": "ɛ", "grapheme": "ɛ", "force": true,
+            "note": "the gaa rules emit GREEK SMALL LETTER EPSILON (U+03B5); IPA open-e is U+025B."}
+    },
+    "gur": {
+      "e": {"ipa": "e", "grapheme": "e", "force": true,
+            "note": "the gur rules mark e, i and o long ([eː] [iː] [oː]) while a, u, ɛ, ɔ, ɩ and ʋ stay short. The source chart used length to render the ATR contrast; these vowels are not phonemically long. Doubled vowels (aa, uu) keep their length mark."},
+      "i": {"ipa": "i", "grapheme": "i", "force": true},
+      "o": {"ipa": "o", "grapheme": "o", "force": true}
     }
   }
 }

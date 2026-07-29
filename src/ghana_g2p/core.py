@@ -145,11 +145,28 @@ class GhanaG2P:
         return bool(got) and not any(MARK in u for u in got)
 
     def _fix_forced(self, units: list[str], output: Output) -> list[str]:
-        """Replace units the rule set maps wrongly (e.g. Ewe <y> -> IPA y, not j)."""
+        """Replace units the rule set maps wrongly (e.g. Ewe <y> -> IPA y, not j).
+
+        africa-g2p strips diacritics before matching and re-attaches them, so a
+        precomposed vowel like ẽ arrives as the base vowel's value plus a combining
+        tilde. Substitutions therefore have to match the base of a unit, not only the
+        whole unit, or the fix silently misses every nasalised vowel.
+        """
         sub = self._wrong.get(output)
         if not sub:
             return units
-        return [sub.get(u, u) for u in units]
+        out = []
+        for u in units:
+            if u in sub:
+                out.append(sub[u])
+                continue
+            for wrong, right in sub.items():
+                rest = u[len(wrong):]
+                if u.startswith(wrong) and rest and all(unicodedata.combining(c) for c in rest):
+                    u = right + rest
+                    break
+            out.append(u)
+        return out
 
     def _convert_word(self, word: str, output: Output) -> tuple[list[str], list[str]]:
         units = self._units(word, output)
