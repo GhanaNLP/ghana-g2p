@@ -220,15 +220,19 @@ class GhanaG2P:
 
     # -- public API --------------------------------------------------------
 
-    def _punctuated_units(self, text: str, output: Output) -> tuple[list[str], list[str]]:
-        """Phoneme units with punctuation kept, each mark as its own unit.
+    def _tokenized_units(self, text: str, output: Output,
+                         keep_punctuation: bool) -> tuple[list[str], list[str]]:
+        """Phoneme units for a whole text, optionally keeping punctuation as its own units.
 
         Punctuation is emitted separately rather than attached to the neighbouring
         phoneme, so the "one token = one unit" property still holds — attaching it would
         reintroduce exactly the boundary ambiguity that separating units avoids.
 
-        Apostrophes are unaffected: the tokenizer treats them as word-internal, so in
-        Anyin and the Guang languages they stay inside the word and become ʔ.
+        Tokenizing is what makes the apostrophe behave: it counts as word-internal only
+        when letters surround it, so an elision mark inside a word becomes ʔ while a
+        quotation mark stands alone and is treated as punctuation. Splitting on whitespace
+        instead would hand trailing quotes to the patch layer, which would read them as
+        glottal stops.
         """
         units: list[str] = []
         dropped: list[str] = []
@@ -237,7 +241,7 @@ class GhanaG2P:
                 u, d = self._convert_word(tok.text, output)
                 units.extend(u)
                 dropped.extend(d)
-            else:
+            elif keep_punctuation:
                 units.extend(c for c in tok.text if unicodedata.category(c).startswith("P"))
         return _drop_empty_brackets(units), dropped
 
@@ -249,15 +253,7 @@ class GhanaG2P:
         when the marks carry prosody (pauses, phrase breaks) you want to model. Digits are
         dropped either way; they need per-language verbalisation, which this cannot do.
         """
-        units: list[str] = []
-        dropped: list[str] = []
-        if punctuation:
-            units, dropped = self._punctuated_units(self._normalise(text), output)
-        else:
-            for word in self._normalise(text).split():
-                u, d = self._convert_word(word, output)
-                units.extend(u)
-                dropped.extend(d)
+        units, dropped = self._tokenized_units(self._normalise(text), output, punctuation)
         return Result(
             phonemes=sep.join(units),
             units=units,
@@ -285,23 +281,18 @@ class GhanaG2P:
                 out.append("")
                 continue
             units: list[str] = []
-            if punctuation:
-                # tokenizing keeps the marks positioned, so only word tokens are cached
-                for tok in tokenize(normalize_text(self._normalise(t))):
-                    if not tok.is_word:
+            # tokenizing (rather than splitting on whitespace) is what keeps a quotation
+            # mark from being read as a glottal stop; only word tokens are worth caching
+            for tok in tokenize(normalize_text(self._normalise(t))):
+                if not tok.is_word:
+                    if punctuation:
                         units.extend(c for c in tok.text
                                      if unicodedata.category(c).startswith("P"))
-                        continue
-                    if tok.text not in cache:
-                        cache[tok.text] = self._convert_word(tok.text, output)[0]
-                    units.extend(cache[tok.text])
-                units = _drop_empty_brackets(units)
-            else:
-                for w in self._normalise(t).split():
-                    if w not in cache:
-                        cache[w] = self._convert_word(w, output)[0]
-                    units.extend(cache[w])
-            out.append(sep.join(units))
+                    continue
+                if tok.text not in cache:
+                    cache[tok.text] = self._convert_word(tok.text, output)[0]
+                units.extend(cache[tok.text])
+            out.append(sep.join(_drop_empty_brackets(units)))
         return out
 
 

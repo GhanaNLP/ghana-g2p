@@ -303,3 +303,27 @@ def test_punctuation_mode_matches_plain_after_stripping_marks():
         kept = [u for u in with_p
                 if not (len(u) == 1 and unicodedata.category(u).startswith("P"))]
         assert kept == g.convert(text).units, lang
+
+
+def test_quotation_mark_is_not_a_glottal_stop():
+    """An apostrophe is a letter only between letters.
+
+    Splitting on whitespace handed a trailing quote to the patch layer, which read it as
+    ʔ — 'mʼagya,’.' gained a glottal stop that is not in the word. Tokenizing first is
+    what distinguishes an elision mark inside a word from a quotation mark beside one.
+    """
+    g = GhanaG2P("Akuapem_Twi_twi")
+    units = g.convert("Wɔka se, ‘Woyɛ mʼagya,’.").units
+    assert units.count("ʔ") == 1          # the one inside mʼagya, not the closing quote
+    assert units[-1] != "ʔ"
+
+
+def test_word_final_apostrophe_is_elision_not_punctuation():
+    """A word-final apostrophe marks elision in these orthographies.
+
+    Dagbani writes it that way (Filistianim’), so it belongs to the word and becomes ʔ.
+    Only an apostrophe detached from the word — after a comma, or opening a quotation —
+    is punctuation.
+    """
+    assert "ʔ" in GhanaG2P("Dagbani").convert("Filistianim’").units
+    assert "ʔ" not in GhanaG2P("Dagbani").convert("‘Filistianim").units
