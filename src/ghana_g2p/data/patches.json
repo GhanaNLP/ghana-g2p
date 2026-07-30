@@ -1,14 +1,40 @@
 {
   "_comment": "Corrections applied on top of africa-g2p. `universal` fills in letters that individual rule sets omit even though the orthography uses them - the values are the conventional readings of these letters across Ghanaian Latin orthographies. `per_rules` fixes mappings that are wrong rather than missing, keyed by africa-g2p rule code. Every entry is applied only when the rule set does not already handle the character, so a language's own rules always win. Defects that were fixed upstream (africa-g2p#3, #4) have been removed from here rather than left as no-ops; pyproject pins the africa-g2p commit that contains those fixes.",
   "universal": {
+    "'": {
+      "ipa": "ʔ",
+      "grapheme": "ʼ",
+      "note": "africa-g2p's normalizer folds ʼ (U+02BC) and ’ (U+2019) to the ASCII apostrophe, so this is the form the patch layer actually sees once text has been normalized. The tokenizer keeps apostrophes word-internal, so a standalone quotation mark is a separate token and is never phonemised."
+    },
+    "ʼ": {
+      "ipa": "ʔ",
+      "grapheme": "ʼ",
+      "note": "saltillo / apostrophe marks glottal stop"
+    },
+    "’": {
+      "ipa": "ʔ",
+      "grapheme": "ʼ"
+    },
+    "ꞌ": {
+      "ipa": "ʔ",
+      "grapheme": "ʼ"
+    },
     "c": {
       "ipa": "t͡ʃ",
       "grapheme": "c",
       "note": "c is /t͡ʃ/ in most Ghanaian orthographies"
     },
+    "h": {
+      "ipa": "h",
+      "grapheme": "h"
+    },
     "j": {
       "ipa": "d͡ʒ",
       "grapheme": "j"
+    },
+    "p": {
+      "ipa": "p",
+      "grapheme": "p"
     },
     "r": {
       "ipa": "ɾ",
@@ -18,30 +44,26 @@
       "ipa": "v",
       "grapheme": "v"
     },
-    "z": {
-      "ipa": "z",
-      "grapheme": "z"
-    },
-    "p": {
-      "ipa": "p",
-      "grapheme": "p"
-    },
-    "h": {
-      "ipa": "h",
-      "grapheme": "h"
-    },
     "x": {
       "ipa": "x",
       "grapheme": "x"
     },
-    "ɣ": {
-      "ipa": "ɣ",
-      "grapheme": "ɣ",
-      "note": "gamma, used in Kabiye"
+    "z": {
+      "ipa": "z",
+      "grapheme": "z"
     },
-    "ɲ": {
-      "ipa": "ɲ",
-      "grapheme": "ny"
+    "ð": {
+      "ipa": "ð",
+      "grapheme": "ð"
+    },
+    "đ": {
+      "ipa": "d",
+      "grapheme": "d"
+    },
+    "ƒ": {
+      "ipa": "ɸ",
+      "grapheme": "ƒ",
+      "note": "f-hook, voiceless bilabial fricative"
     },
     "ǝ": {
       "ipa": "ə",
@@ -51,27 +73,14 @@
       "ipa": "ə",
       "grapheme": "ə"
     },
-    "ʼ": {
-      "ipa": "ʔ",
-      "grapheme": "ʼ",
-      "note": "saltillo / apostrophe marks glottal stop"
+    "ɣ": {
+      "ipa": "ɣ",
+      "grapheme": "ɣ",
+      "note": "gamma, used in Kabiye"
     },
-    "ꞌ": {
-      "ipa": "ʔ",
-      "grapheme": "ʼ"
-    },
-    "đ": {
-      "ipa": "d",
-      "grapheme": "d"
-    },
-    "ð": {
-      "ipa": "ð",
-      "grapheme": "ð"
-    },
-    "ƒ": {
-      "ipa": "ɸ",
-      "grapheme": "ƒ",
-      "note": "f-hook, voiceless bilabial fricative"
+    "ɲ": {
+      "ipa": "ɲ",
+      "grapheme": "ny"
     }
   },
   "per_rules": {

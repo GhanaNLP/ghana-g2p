@@ -274,3 +274,32 @@ def test_punctuation_batch_matches_single():
     assert g.batch(texts, "ipa", " ", True) == [
         g.ipa(t, sep=" ", punctuation=True) for t in texts
     ]
+
+
+@pytest.mark.parametrize("apostrophe", ["'", "’", "ʼ", "ꞌ"])
+def test_all_apostrophe_forms_are_glottal(apostrophe):
+    """Every apostrophe variant must reach ʔ.
+
+    africa-g2p's normalizer folds ʼ (U+02BC) and ’ (U+2019) to the ASCII apostrophe, so
+    which form the patch layer sees depends on how much normalization already happened.
+    Missing the ASCII one silently dropped the glottal stop in punctuation mode only.
+    """
+    g = GhanaG2P("Akuapem_Twi_twi")
+    text = f"n{apostrophe}abakan"
+    assert "ʔ" in g.convert(text).units
+    assert "ʔ" in g.convert(text, punctuation=True).units
+
+
+def test_punctuation_mode_matches_plain_after_stripping_marks():
+    """The two columns must differ only by the punctuation units."""
+    import unicodedata
+    for lang, text in [
+        ("Akuapem_Twi_twi", "Na Kanaan woo nʼabakan."),
+        ("Anyin", "Ɛhɩ, anianman-mɔ, m'ɔ tʋ de Wawɛ."),
+        ("twi", "Wɔtoo ɔbaako din Peleg a ase kyerɛ Nkyekyɛmu, efisɛ nʼawobere."),
+    ]:
+        g = GhanaG2P(lang)
+        with_p = g.convert(text, punctuation=True).units
+        kept = [u for u in with_p
+                if not (len(u) == 1 and unicodedata.category(u).startswith("P"))]
+        assert kept == g.convert(text).units, lang
