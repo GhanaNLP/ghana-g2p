@@ -148,6 +148,21 @@ Run-together text would force `--split_size char`, which splits every multi-char
 (The aligner's normaliser folds modifier letters — `kʰ`→`kh`, `nʷ`→`nw` — but unit
 boundaries survive because they are space-separated.)
 
+### Keeping punctuation
+
+Punctuation is stripped by default. Pass `punctuation=True` to keep it, with each mark as
+its own unit — attaching it to a neighbouring phoneme would reintroduce the boundary
+ambiguity that separating units avoids:
+
+```python
+GhanaG2P("twi").ipa("Wo ho te sɛn?", sep=" ", punctuation=True)
+# 'w o h o tʰ e s ɛ n ?'
+```
+
+Useful when the marks carry prosody you want to model. Bracket pairs left empty once their
+contents were dropped are removed, so the verse-number convention `(23)` does not leave a
+bare `( )`; brackets around real content are kept.
+
 Two more notes:
 
 - Apostrophes are **not** punctuation in several of these orthographies — in Anyin and the

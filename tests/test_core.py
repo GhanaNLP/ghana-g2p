@@ -231,3 +231,46 @@ def test_spaced_output_unit_count_matches_units_list():
         g = GhanaG2P(lang)
         assert g.ipa(text, sep=" ").split() == g.convert(text).units
         assert g.grapheme(text, sep=" ").split() == g.convert(text, "grapheme").units
+
+
+# -- punctuation mode -----------------------------------------------------
+
+def test_punctuation_kept_as_own_units():
+    """Marks are separate units, so 'one token = one unit' still holds."""
+    units = GhanaG2P("twi").convert("Wo ho te sɛn?", punctuation=True).units
+    assert units[-1] == "?"
+    assert "sɛn?" not in units and "n?" not in units
+
+
+def test_punctuation_off_by_default():
+    assert "?" not in GhanaG2P("twi").ipa("Wo ho te sɛn?")
+
+
+def test_punctuation_does_not_change_phonemes():
+    g = GhanaG2P("twi")
+    text = "Mfiase no Onyankopɔn bɔɔ ɔsoro."
+    with_p = [u for u in g.convert(text, punctuation=True).units if u != "."]
+    assert with_p == g.convert(text).units
+
+
+def test_empty_brackets_dropped_but_real_ones_kept():
+    """Digits are not verbalised, so '(23)' would otherwise leave a bare '( )'."""
+    g = GhanaG2P("twi")
+    assert "(" not in g.ipa("Kosi so (23)", sep=" ", punctuation=True)
+    kept = g.ipa("Kosi (Noa) so", sep=" ", punctuation=True)
+    assert "(" in kept and ")" in kept
+
+
+def test_apostrophe_still_glottal_in_punctuation_mode():
+    """The apostrophe is a letter in Anyin, not punctuation — it must stay a phoneme."""
+    out = GhanaG2P("Anyin").ipa("m'ɔ tʋ de, Wawɛ.", sep=" ", punctuation=True)
+    assert "ʔ" in out.split()
+    assert "'" not in out
+
+
+def test_punctuation_batch_matches_single():
+    g = GhanaG2P("twi")
+    texts = ["Wo ho te sɛn?", "Efi Adam So, Kosi.", "Kosi so (23)"]
+    assert g.batch(texts, "ipa", " ", True) == [
+        g.ipa(t, sep=" ", punctuation=True) for t in texts
+    ]

@@ -9,9 +9,31 @@ from importlib.resources import files
 from typing import Iterable, Literal
 
 from africa_g2p import G2P
+from africa_g2p.normalizer import normalize_text, tokenize
 
 Output = Literal["ipa", "grapheme"]
 MARK = "�"  # africa-g2p's unknown='mark' sentinel
+
+
+def _drop_empty_brackets(units: list[str]) -> list[str]:
+    """Remove bracket pairs left empty once their contents were dropped.
+
+    Digits are not verbalised, so "(23)" — the verse-number convention throughout this
+    kind of corpus — would otherwise leave a bare "( )" carrying no prosody. Only an
+    opening mark immediately followed by its closing mark is removed, so brackets around
+    real content are untouched.
+    """
+    def cat(u: str) -> str:
+        # phoneme units may be multi-character (kʰ, k͡p); only single marks can bracket
+        return unicodedata.category(u) if len(u) == 1 else ""
+
+    out: list[str] = []
+    for u in units:
+        if out and cat(u) == "Pe" and cat(out[-1]) == "Ps":
+            out.pop()
+            continue
+        out.append(u)
+    return out
 
 
 class UnknownLanguage(KeyError):
@@ -198,14 +220,44 @@ class GhanaG2P:
 
     # -- public API --------------------------------------------------------
 
-    def convert(self, text: str, output: Output = "ipa", sep: str = "") -> Result:
-        """Phonemise `text`, returning phonemes plus provenance."""
+    def _punctuated_units(self, text: str, output: Output) -> tuple[list[str], list[str]]:
+        """Phoneme units with punctuation kept, each mark as its own unit.
+
+        Punctuation is emitted separately rather than attached to the neighbouring
+        phoneme, so the "one token = one unit" property still holds — attaching it would
+        reintroduce exactly the boundary ambiguity that separating units avoids.
+
+        Apostrophes are unaffected: the tokenizer treats them as word-internal, so in
+        Anyin and the Guang languages they stay inside the word and become ʔ.
+        """
         units: list[str] = []
         dropped: list[str] = []
-        for word in self._normalise(text).split():
-            u, d = self._convert_word(word, output)
-            units.extend(u)
-            dropped.extend(d)
+        for tok in tokenize(normalize_text(text)):
+            if tok.is_word:
+                u, d = self._convert_word(tok.text, output)
+                units.extend(u)
+                dropped.extend(d)
+            else:
+                units.extend(c for c in tok.text if unicodedata.category(c).startswith("P"))
+        return _drop_empty_brackets(units), dropped
+
+    def convert(self, text: str, output: Output = "ipa", sep: str = "",
+                punctuation: bool = False) -> Result:
+        """Phonemise `text`, returning phonemes plus provenance.
+
+        Set `punctuation=True` to keep punctuation marks as units of their own — useful
+        when the marks carry prosody (pauses, phrase breaks) you want to model. Digits are
+        dropped either way; they need per-language verbalisation, which this cannot do.
+        """
+        units: list[str] = []
+        dropped: list[str] = []
+        if punctuation:
+            units, dropped = self._punctuated_units(self._normalise(text), output)
+        else:
+            for word in self._normalise(text).split():
+                u, d = self._convert_word(word, output)
+                units.extend(u)
+                dropped.extend(d)
         return Result(
             phonemes=sep.join(units),
             units=units,
@@ -215,15 +267,16 @@ class GhanaG2P:
             dropped=sorted(set(dropped)),
         )
 
-    def ipa(self, text: str, sep: str = "") -> str:
-        """IPA phonemes, punctuation and spaces stripped."""
-        return self.convert(text, "ipa", sep).phonemes
+    def ipa(self, text: str, sep: str = "", punctuation: bool = False) -> str:
+        """IPA phonemes, spaces stripped; punctuation stripped unless punctuation=True."""
+        return self.convert(text, "ipa", sep, punctuation).phonemes
 
-    def grapheme(self, text: str, sep: str = "") -> str:
-        """Native-orthography phoneme units, punctuation and spaces stripped."""
-        return self.convert(text, "grapheme", sep).phonemes
+    def grapheme(self, text: str, sep: str = "", punctuation: bool = False) -> str:
+        """Native-orthography units, spaces stripped; punctuation kept only on request."""
+        return self.convert(text, "grapheme", sep, punctuation).phonemes
 
-    def batch(self, texts: Iterable[str], output: Output = "ipa", sep: str = "") -> list[str]:
+    def batch(self, texts: Iterable[str], output: Output = "ipa", sep: str = "",
+              punctuation: bool = False) -> list[str]:
         """Phonemise many strings; caches per word, which matters on speech corpora."""
         cache: dict[str, list[str]] = {}
         out = []
@@ -232,14 +285,27 @@ class GhanaG2P:
                 out.append("")
                 continue
             units: list[str] = []
-            for w in self._normalise(t).split():
-                if w not in cache:
-                    cache[w] = self._convert_word(w, output)[0]
-                units.extend(cache[w])
+            if punctuation:
+                # tokenizing keeps the marks positioned, so only word tokens are cached
+                for tok in tokenize(normalize_text(self._normalise(t))):
+                    if not tok.is_word:
+                        units.extend(c for c in tok.text
+                                     if unicodedata.category(c).startswith("P"))
+                        continue
+                    if tok.text not in cache:
+                        cache[tok.text] = self._convert_word(tok.text, output)[0]
+                    units.extend(cache[tok.text])
+                units = _drop_empty_brackets(units)
+            else:
+                for w in self._normalise(t).split():
+                    if w not in cache:
+                        cache[w] = self._convert_word(w, output)[0]
+                    units.extend(cache[w])
             out.append(sep.join(units))
         return out
 
 
-def g2p(text: str, lang: str, output: Output = "ipa", sep: str = "") -> str:
+def g2p(text: str, lang: str, output: Output = "ipa", sep: str = "",
+        punctuation: bool = False) -> str:
     """One-shot conversion."""
-    return GhanaG2P(lang).convert(text, output, sep).phonemes
+    return GhanaG2P(lang).convert(text, output, sep, punctuation).phonemes
