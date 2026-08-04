@@ -220,8 +220,8 @@ class GhanaG2P:
 
     # -- public API --------------------------------------------------------
 
-    def _tokenized_units(self, text: str, output: Output,
-                         keep_punctuation: bool) -> tuple[list[str], list[str]]:
+    def _tokenized_units(self, text: str, output: Output, keep_punctuation: bool,
+                         word_boundary: str | None = None) -> tuple[list[str], list[str]]:
         """Phoneme units for a whole text, optionally keeping punctuation as its own units.
 
         Punctuation is emitted separately rather than attached to the neighbouring
@@ -236,9 +236,15 @@ class GhanaG2P:
         """
         units: list[str] = []
         dropped: list[str] = []
+        seen_word = False
         for tok in tokenize(normalize_text(text)):
             if tok.is_word:
                 u, d = self._convert_word(tok.text, output)
+                if u:
+                    # between words only: never leading, never doubled
+                    if word_boundary and seen_word:
+                        units.append(word_boundary)
+                    seen_word = True
                 units.extend(u)
                 dropped.extend(d)
             elif keep_punctuation:
@@ -246,14 +252,21 @@ class GhanaG2P:
         return _drop_empty_brackets(units), dropped
 
     def convert(self, text: str, output: Output = "ipa", sep: str = "",
-                punctuation: bool = False) -> Result:
+                punctuation: bool = False, word_boundary: str | None = None) -> Result:
         """Phonemise `text`, returning phonemes plus provenance.
 
         Set `punctuation=True` to keep punctuation marks as units of their own — useful
         when the marks carry prosody (pauses, phrase breaks) you want to model. Digits are
         dropped either way; they need per-language verbalisation, which this cannot do.
+
+        Set `word_boundary` to a marker (conventionally ``"<w>"``) to insert it between
+        words. Phoneme output otherwise discards word boundaries entirely, which makes the
+        result unusable for anything that needs to know where words begin — word-level
+        alignment, lexicon lookup, readable output. The marker is a unit of its own, so it
+        survives `sep` joining and can be given its own token in a model's vocabulary.
         """
-        units, dropped = self._tokenized_units(self._normalise(text), output, punctuation)
+        units, dropped = self._tokenized_units(
+            self._normalise(text), output, punctuation, word_boundary)
         return Result(
             phonemes=sep.join(units),
             units=units,
@@ -263,16 +276,18 @@ class GhanaG2P:
             dropped=sorted(set(dropped)),
         )
 
-    def ipa(self, text: str, sep: str = "", punctuation: bool = False) -> str:
+    def ipa(self, text: str, sep: str = "", punctuation: bool = False,
+            word_boundary: str | None = None) -> str:
         """IPA phonemes, spaces stripped; punctuation stripped unless punctuation=True."""
-        return self.convert(text, "ipa", sep, punctuation).phonemes
+        return self.convert(text, "ipa", sep, punctuation, word_boundary).phonemes
 
-    def grapheme(self, text: str, sep: str = "", punctuation: bool = False) -> str:
+    def grapheme(self, text: str, sep: str = "", punctuation: bool = False,
+                 word_boundary: str | None = None) -> str:
         """Native-orthography units, spaces stripped; punctuation kept only on request."""
-        return self.convert(text, "grapheme", sep, punctuation).phonemes
+        return self.convert(text, "grapheme", sep, punctuation, word_boundary).phonemes
 
     def batch(self, texts: Iterable[str], output: Output = "ipa", sep: str = "",
-              punctuation: bool = False) -> list[str]:
+              punctuation: bool = False, word_boundary: str | None = None) -> list[str]:
         """Phonemise many strings; caches per word, which matters on speech corpora."""
         cache: dict[str, list[str]] = {}
         out = []
@@ -281,6 +296,7 @@ class GhanaG2P:
                 out.append("")
                 continue
             units: list[str] = []
+            seen_word = False
             # tokenizing (rather than splitting on whitespace) is what keeps a quotation
             # mark from being read as a glottal stop; only word tokens are worth caching
             for tok in tokenize(normalize_text(self._normalise(t))):
@@ -291,7 +307,12 @@ class GhanaG2P:
                     continue
                 if tok.text not in cache:
                     cache[tok.text] = self._convert_word(tok.text, output)[0]
-                units.extend(cache[tok.text])
+                u = cache[tok.text]
+                if u:
+                    if word_boundary and seen_word:
+                        units.append(word_boundary)
+                    seen_word = True
+                units.extend(u)
             out.append(sep.join(_drop_empty_brackets(units)))
         return out
 
