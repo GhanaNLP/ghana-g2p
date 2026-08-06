@@ -18,9 +18,12 @@ classifiers = [
   "Topic :: Text Processing :: Linguistic",
 ]
 dependencies = [
-  # pinned: needs africa-g2p#3 (composed rule keys reachable) and #4 (non-IPA
-  # symbols removed from values). ghana-g2p no longer patches around either.
-  "africa-g2p @ git+https://github.com/AfriSpeech/africa-g2p@0094a341463087bd6f780043223deac2efba9d65",
+  # Was pinned to a git commit, which PyPI refuses to accept in a published distribution
+  # ("Can't have direct dependency"). africa-g2p 0.1.0 is that commit's descendant and carries
+  # both fixes this depends on — #3 (composed rule keys reachable) and #4 (non-IPA symbols
+  # removed from values) — so a version floor now expresses the same requirement. Neither is
+  # patched around here, so an older africa-g2p would produce wrong phonemes rather than fail.
+  "africa-g2p>=0.1.0",
 ]
 
 [project.urls]
@@ -33,5 +36,9 @@ ghana-g2p = "ghana_g2p.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/ghana_g2p"]
 
-[tool.hatch.metadata]
-allow-direct-references = true
+[tool.hatch.build.targets.sdist]
+include = ["src/ghana_g2p", "tests", "README.md", "LICENSE", "pyproject.toml"]
+
+# `allow-direct-references` is deliberately absent. It existed only to permit the git dependency
+# above, and it is what lets an unpublishable distribution build without complaint — leaving it
+# on means a future git reference fails at upload time instead of at build time.
