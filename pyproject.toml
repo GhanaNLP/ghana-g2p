@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ghana-g2p"
-version = "0.1.0"
+version = "0.1.1"
 description = "Grapheme-to-phoneme conversion for Ghanaian languages"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -23,7 +23,7 @@ dependencies = [
   # both fixes this depends on — #3 (composed rule keys reachable) and #4 (non-IPA symbols
   # removed from values) — so a version floor now expresses the same requirement. Neither is
   # patched around here, so an older africa-g2p would produce wrong phonemes rather than fail.
-  "africa-g2p>=0.1.0",
+  "africa-g2p>=0.1.1",
 ]
 
 [project.urls]

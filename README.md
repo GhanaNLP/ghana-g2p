@@ -19,11 +19,12 @@ tw.ipa("Akwaaba", sep=" ")                        # 'a kʷ a a b a'
 
 ## Install
 
-Not on PyPI yet — install from GitHub:
-
 ```bash
-pip install git+https://github.com/GhanaNLP/ghana-g2p
+pip install ghana-g2p
 ```
+
+That pulls [africa-g2p](https://pypi.org/project/africa-g2p/), whose rule tables this builds on.
+Nothing else is needed — both are pure Python with no other runtime dependencies.
 
 For development:
 
@@ -31,12 +32,6 @@ For development:
 git clone https://github.com/GhanaNLP/ghana-g2p
 cd ghana-g2p
 pip install -e .
-```
-
-Note that africa-g2p is not on PyPI either, so install it from source first:
-
-```bash
-pip install git+https://github.com/AfriSpeech/africa-g2p
 ```
 
 ## Why this exists
